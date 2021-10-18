@@ -4,10 +4,11 @@ from django.shortcuts import render
 
 
 def index(request):
-    mensaje = "CHET  -  Proyecto_2"
+    mensaje = "SAT  -  Proyecto3"
     title = "Proyecto_2-IPC2"
     variables = {
         "mensaje": mensaje,
-        "title": title
+        "title": title,
+        "mostrarbarra": False
     }
     return render(request, "index.html", variables)

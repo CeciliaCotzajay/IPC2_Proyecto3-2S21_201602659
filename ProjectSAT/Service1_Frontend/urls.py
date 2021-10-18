@@ -24,13 +24,4 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    # path('Principal/', views.Principal, name='Principal'),
-    # path('Reportes/', views.Reportes, name='Reportes'),
-    # path('Reportesini', views.Reportesini, name= 'Reportesini'),
-    # path('acercaDe/', views.acercaDe, name='acercaDe'),
-    # path('documentacion/', views.documentacion, name='documentacion'),
-    # path('recibirCSV', views.recibirCSV, name='recibirCSV'),
-    # path('enviarXML', views.enviarXML, name='enviarXML'),
-    # path('traerXML', views.traerXML, name='traerXML'),
-
 ]

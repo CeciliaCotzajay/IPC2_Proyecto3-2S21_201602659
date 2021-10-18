@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset='utf-8'>
+    <title>{% block title %}  {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css"/>
+</head>
+<body style="background-image: url('../static/img/fondoR3.png')">
+    <header>
+        {% if mostrarbarra %}
+            <nav>
+            <ul id="menu">
+                <li><a href="">Archivo</a>
+                    <ul>
+                        <li><a href="http://localhost:8000/Principal">Cargar</a></li>
+                        <li><a href="http://localhost:8000">SalirApp</a></li>
+                    </ul>
+                </li>
+                <li><a href="">Reportes</a>
+                    <ul>
+                        <li><a href="http://localhost:8000/Reportesini">Mejores Clientes</a></li>
+                        <li><a href="http://localhost:8000/Reportesini">Juegos + vendidos</a></li>
+                        <li><a href="http://localhost:8000/Reportesini">Clasificación</a></li>
+                        <li><a href="http://localhost:8000/Reportesini">Cumpleaños</a></li>
+                        <li><a href="http://localhost:8000/Reportesini">Lista Juegos</a></li>
+                    </ul>
+                </li>
+                <li><a href="">ayuda</a>
+                    <ul>
+                        <li><a href="http://localhost:8000/documentacion">Documentación</a></li>
+                        <li><a href="http://localhost:8000/acercaDe">Acerca De....</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        {% else %}
+            <br>
+            <br>
+        {% endif %}
+    </header>
+    <br>
+    {% block content %}
+    {% endblock%}
+    <br>
+    <br>
+    <br>
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>Universidad de San Carlos de Guatemala</p>
+            <p>ceciliacotzajay@gmail.com</p>
+            <p>Todos los Derechos Reservados &copy;SAT 2021</p>
+        </div>
+    </footer>
+</body>
+</html>
