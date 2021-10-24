@@ -47,6 +47,47 @@ ul{
 #menu>li:hover>ul {
     display:block;
 }
+.textGeneral{
+box-sizing: border-box;
+display: -webkit-flex;
+display: -moz-flex;
+display: -o-flex;
+display: flex;
+flex-flow: row wrap;
+padding: 50px;
+}
+.textAreacenter{
+flex: 1 100%;
+padding-left: 30em;
+padding-right: 30em;
+}
+.textArearight{
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    flex-flow: row wrap;
+}
+.textArearight > * {
+    flex:1 60%;
+    margin-right: 1.25em;
+}
+.textAreaLeft{
+    width:129%;
+    font-size: 13px;
+}
+@media screen and (min-width: 600px) {
+    .textArearight > *{
+    flex:0px;
+    }
+    .textAreaLeft{
+        flex:0px;
+    }
+    .textArearight{
+        flex:0px;
+    }
+}
 /*--------------FORMULARIO------------------------------------*/
 .contenido{
 padding-left: 25em;
@@ -97,6 +138,32 @@ form img, /*.nav-head*/ ul li :hover{
   .boton_personalizado:hover{
     color: #ffffff;
     background-color: #1B4F72; /*#581845;*/
+  }
+  .boton_personalizado2{
+    text-decoration: none;
+    padding: 5px;
+    font-size: 15px;
+    color: #00FF00;
+    background-color: #454545;
+    border-radius: 6px;
+    border: 2px solid #0016b0;
+  }
+  .boton_personalizado2:hover{
+    color: cyan;
+    background-color: #1B4F72; /*#581845;*/
+  }
+  .boton_Reset{
+    text-decoration: none;
+    padding: 5px;
+    font-size: 15px;
+    color: orange;
+    background-color: #454545;
+    border-radius: 6px;
+    border: 2px solid #0016b0;
+  }
+  .boton_Reset:hover{
+    color: magenta;
+    background-color: #5317AB; /*#581845;*/
   }
 /*--------------FOOTER------------------------------------*/
 footer {

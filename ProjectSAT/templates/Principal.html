@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %} {{ title }} {% endblock %}
+{% block content %}
+    <center>
+        <h1>{{ mensaje }}</h1>
+        <div class="textGeneral">
+            <div class="textAreacenter">
+                <form action="/recibirXML" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="solicitudes"  accept="doc/xml, .xml"/><br><br>
+                    <input class="boton_personalizado2" type="submit" value="Cargar" /><br><br>
+                    <input class="boton_Reset" type="submit" value="Resetear" /><br>
+                </form>
+            </div>
+            <br>
+            <div class="textAreaLeft">
+                <form action="/enviarXML" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input class="boton_personalizado2" type="submit" value="Enviar XML" /><br><br>
+                    <textarea name="textEnvioXML" id="textEnvioXML" cols="75" rows="25">{{texto}}</textarea><br>
+                </form>
+            </div>
+            <div class="textArearight">
+                <form action="/traerXML" method="GET" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input class="boton_personalizado2" type="submit" value="Recibir XML" /><br><br>
+                    <textarea name="textRecibirXML" id="textRecibirXML" cols="75" rows="25" readonly>{{texto2}}</textarea>
+                </form>
+            </div>
+        </div>
+    </center>
+{% endblock %}
