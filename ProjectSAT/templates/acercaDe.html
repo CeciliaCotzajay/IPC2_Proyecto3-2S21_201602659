@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} {{ title }} {% endblock %}
+{% block content %}
+<center>
+    <h1>{{ mensaje }}</h1>
+    <img src="/static/img/mario.gif" width="90" height="125"/>
+    <h4>Curso Introducción a la Programación y Computación 2</h4>
+    <h5>Sección N</h5>
+    <h4>María Cecilia Cotzajay López</h4>
+    <h5>201602659</h5><br>
+    <form action="/Principal/" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input class="boton_Reset" type="submit" value="Regresar"/><br>
+    </form>
+</center>
+{% endblock %}
