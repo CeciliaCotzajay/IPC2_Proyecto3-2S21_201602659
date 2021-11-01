@@ -25,5 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('Principal/', views.Principal, name='Principal'),
-path('acercaDe/', views.acercaDe, name='acercaDe'),
+    path('acercaDe/', views.acercaDe, name='acercaDe'),
+    path('recibirXML', views.recibirXML, name='recibirXML'),
+    path('resetear', views.resetear, name='resetear'),
 ]

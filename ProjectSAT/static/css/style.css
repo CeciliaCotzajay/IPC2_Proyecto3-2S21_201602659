@@ -165,7 +165,29 @@ form img, /*.nav-head*/ ul li :hover{
     color: magenta;
     background-color: #5317AB; /*#581845;*/
   }
-/*--------------FOOTER------------------------------------*/
+
+  .alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: .25rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    transition-property: background-color, color, border-color;
+    -o-transition: 1s;
+    transition-duration: 1s;
+    transition-timing-function: ease-out;
+  }
+  .alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+  .alert-warning {
+    color: black;
+    background-color: #F59E29;
+    border-color: #ffeeba;
+  }
+/*--------------FOOTER-----------------#F99104;-------------------*/
 footer {
     box-sizing: border-box;
     display: -webkit-flex;
