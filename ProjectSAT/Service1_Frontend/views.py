@@ -1,6 +1,7 @@
 from xml.dom import minidom
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+import requests as req
 
 
 # Create your views here.
@@ -70,14 +71,6 @@ def recibirXML(request):
     return render(request, 'Principal.html', variables)
 
 
-def quitarCaracteresEspeciales(cadenaEvaluar):
-    copia = cadenaEvaluar.replace("\n", "")
-    copia2 = copia.replace("\t", "")
-    copia3 = copia2.replace("\f", "")
-    cadenaRetornar = copia3.replace("\t", "")
-    return cadenaRetornar
-
-
 def resetear(request):
     if request.method == 'POST':
         mensaje = "Carga de Archivo"
@@ -88,3 +81,12 @@ def resetear(request):
             "title": title,
         }
         return render(request, "Principal.html", variables)
+
+
+def enviarXML(request):
+    if request.method == 'POST':
+        xml_envio = request.POST["textEnvioXML"]
+        # print(xml_envio)
+        req.post('http://127.0.0.1:5000/process_xml', xml_envio)
+        print("**************DONE--Django-POST-********************************************")
+    return redirect('Principal')

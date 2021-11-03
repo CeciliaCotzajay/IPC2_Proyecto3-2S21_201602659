@@ -28,4 +28,5 @@ urlpatterns = [
     path('acercaDe/', views.acercaDe, name='acercaDe'),
     path('recibirXML', views.recibirXML, name='recibirXML'),
     path('resetear', views.resetear, name='resetear'),
+    path('enviarXML', views.enviarXML, name='enviarXML'),
 ]

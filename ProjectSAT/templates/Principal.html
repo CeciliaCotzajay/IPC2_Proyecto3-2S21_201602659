@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
-{% block title %} {{ title }} {% endblock %}
+{% block title %}
+    {% if title %}
+        {{ title }}
+    {% else %}
+        "SAT-POST-P3"
+    {% endif %}
+{% endblock %}
+{ mostrarbarra==True }
 {% block content %}
     <center>
-        <h1>{{ mensaje }}</h1>
+        {% if mensaje %}
+            <h1>{{ mensaje }}</h1>
+        {% else %}
+            <h1>Información -DoneMethod-POST-</h1>
+        {% endif %}
         {% if mostrarWarning %}
             <form action="/Principal/" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
