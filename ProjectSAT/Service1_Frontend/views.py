@@ -72,15 +72,25 @@ def recibirXML(request):
 
 
 def resetear(request):
+    texto = ""
+    mostrarWarning = False
+    textoAviso = None
     if request.method == 'POST':
-        mensaje = "Carga de Archivo"
-        title = "Proyecto_3-IPC2"
-        variables = {
-            "mostrarbarra": True,
-            "mensaje": mensaje,
-            "title": title,
-        }
-        return render(request, "Principal.html", variables)
+        req.post('http://127.0.0.1:5000/reset', 'reset')
+        mostrarWarning = True
+        textoAviso = "Sistema Reseteado!!- "
+        print("**************DONE--Django-POST-RESET-********************************************")
+    mensaje = "Carga de Archivos"
+    title = "Proyecto_3-IPC2"
+    variables = {
+        "mostrarbarra": True,
+        "mensaje": mensaje,
+        "title": title,
+        "texto": texto,
+        "mostrarWarning": mostrarWarning,
+        "textoAviso": textoAviso
+    }
+    return render(request, 'Principal.html', variables)
 
 
 def enviarXML(request):
