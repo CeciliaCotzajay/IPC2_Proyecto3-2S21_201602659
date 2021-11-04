@@ -12,8 +12,8 @@
         <img src="/static/img/grafica1.jpg"/><br>
         <form action="/pdf" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <input class="boton_personalizado2" type="submit" value="Ver" /><br><br>
-            <textarea name="pdf" id="pdf" cols="20" rows="1">{{texto}}</textarea><br>
+            <textarea name="pdf" id="pdf" cols="20" rows="1">{{texto}}</textarea><br><br>
+            <input class="boton_personalizado2" type="submit" value="Ver" /><br>
         </form>
     </center>
 {% endblock %}

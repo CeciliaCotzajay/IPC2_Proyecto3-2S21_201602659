@@ -235,4 +235,4 @@ def pdf(request):
         c.drawString(90, 600, str(XML2))
         c.save()
         print("**************DONE--Django-POST-PDF-********************************************")
-    return redirect('Reportes')
+    return redirect('Principal')
