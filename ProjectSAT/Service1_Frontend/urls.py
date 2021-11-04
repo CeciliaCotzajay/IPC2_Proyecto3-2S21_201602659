@@ -30,4 +30,8 @@ urlpatterns = [
     path('resetear', views.resetear, name='resetear'),
     path('enviarXML', views.enviarXML, name='enviarXML'),
     path('traerXML', views.traerXML, name='traerXML'),
+    path('Reportes/', views.Reportes, name='Reportes'),
+    path('Reportesini', views.Reportesini, name='Reportesini'),
+    path('segundoXML', views.segundoXML, name='segundoXML'),
+    path('pdf', views.pdf, name='pdf'),
 ]

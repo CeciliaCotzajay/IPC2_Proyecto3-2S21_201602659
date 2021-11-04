@@ -383,6 +383,7 @@ def reset():
         listaDTE = None
         listaErrores = None
         listaAprobaciones = None
+        listaDatosGenerales = None
         print("**************DONE--Flask-POST-RESET-********************************************")
     return ''
 
@@ -483,6 +484,80 @@ def get_xml():
     archivoXML.write(xml_text)
     archivoXML.close()
     print("**************DONE--Flask-GET-XML-********************************************")
+    return xml_doc
+
+
+@app.route('/segundoXML', methods=['GET'])
+def CrearSegundoArchivo():
+    global listaDTE
+    fechas = []
+    for d in listaDTE.lista_dte:
+        fecha = d.fecha
+        for d2 in listaDTE.lista_dte:
+            fecha2 = d2.fecha
+            if fecha2 != fecha:
+                fechas.append(fecha2)
+    document = minidom.Document()
+    root = document.createElement('BASE_DATOS_NIT')
+    for f in fechas:
+        fechaDoc = document.createElement('FECHA')
+        fechaDoc.appendChild(document.createTextNode(f))
+        root.appendChild(fechaDoc)
+        emisoresIva = []
+        ivE = []
+        ivR = []
+        receptoresIva = []
+        for dte in listaDTE.lista_dte:
+            if dte.fecha == f:
+                if emisoresIva:
+                    c = 0
+                    for emi in emisoresIva:
+                        if emi != dte.nitEmisor:
+                            emisoresIva.append(dte.nitEmisor)
+                            ivE.append(dte.iva)
+                        else:
+                            ivE[c] = ivE[c] + dte.iva
+                        c += 1
+                else:
+                    emisoresIva.append(dte.nitEmisor)
+                    ivE.append(dte.iva)
+                if receptoresIva:
+                    c = 0
+                    for rec in receptoresIva:
+                        if rec != dte.nitReceptor:
+                            receptoresIva.append(dte.nitReceptor)
+                            ivR.append(dte.iva)
+                        else:
+                            ivR[c] = ivR[c] + dte.iva
+                        c += 1
+                else:
+                    receptoresIva.append(dte.nitReceptor)
+                    ivR.append(dte.iva)
+        c2 = 0
+        for e in emisoresIva:
+            nitEmisor = document.createElement('NIT_EMISOR')
+            nitEmisor.appendChild(document.createTextNode(e))
+            fechaDoc.appendChild(nitEmisor)
+            iva = document.createElement('IVA_EMISOR')
+            iva.appendChild(document.createTextNode(str(ivE[c2])))
+            fechaDoc.appendChild(iva)
+            c2 += 1
+        c3 = 0
+        for rI in receptoresIva:
+            nitReceptor = document.createElement('NIT_RECEPTOR')
+            nitReceptor.appendChild(document.createTextNode(rI))
+            fechaDoc.appendChild(nitReceptor)
+            iva = document.createElement('IVA_RECEPTOR')
+            iva.appendChild(document.createTextNode(str(ivR[c3])))
+            fechaDoc.appendChild(iva)
+            c3 += 1
+
+    xml_text = root.toprettyxml(indent='\t', encoding='utf-8')
+    xml_doc = xml_text.decode('utf-8')
+    archivoXML = open("BaseDatosNIT" + '.xml', 'wb')
+    archivoXML.write(xml_text)
+    archivoXML.close()
+    print("**************DONE--Flask-GET-XML2-********************************************")
     return xml_doc
 
 

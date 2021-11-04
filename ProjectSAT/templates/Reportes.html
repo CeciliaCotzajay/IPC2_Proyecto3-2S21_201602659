@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} {{ title }} {% endblock %}
+{% block content %}
+    <center>
+        <h1>{{ mensaje }}</h1><br>
+        <h2>Resumen de IVA por fecha y NIT</h2><br>
+        <form action="/segundoXML" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input class="boton_personalizado2" type="submit" value="Ver" /><br><br>
+            <textarea name="fecha" id="fecha" cols="20" rows="1">{{texto}}</textarea><br>
+        </form>
+        <img src="/static/img/grafica1.jpg"/><br>
+        <form action="/pdf" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input class="boton_personalizado2" type="submit" value="Ver" /><br><br>
+            <textarea name="pdf" id="pdf" cols="20" rows="1">{{texto}}</textarea><br>
+        </form>
+    </center>
+{% endblock %}
