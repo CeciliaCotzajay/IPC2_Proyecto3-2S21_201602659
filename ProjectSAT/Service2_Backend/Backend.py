@@ -38,10 +38,22 @@ class Error:
 
 class Aprobacion:
 
-    def __init__(self, referencia=None, nitEmisor=None, codigoAprobacion=None):
+    def __init__(self, fecha=None, referencia=None, nitEmisor=None, codigoAprobacion=None):
+        self.fecha = fecha
         self.referencia = referencia
         self.nitEmisor = nitEmisor
         self.codigoAprobacion = codigoAprobacion
+
+
+class DatosGenerales:
+
+    def __init__(self, fecha=None, cantFacturasRecibidas=None, cantFacturasCorrectas=None, cantEmisores=None,
+                 cantReceptores=None):
+        self.fecha = fecha
+        self.cantFacturasRecibidas = cantFacturasRecibidas
+        self.cantFacturasCorrectas = cantFacturasCorrectas
+        self.cantEmisores = cantEmisores
+        self.cantReceptores = cantReceptores
 
 
 # ##################################################### CLASES #########################################################
@@ -52,10 +64,10 @@ class ListaDTE:
     def add(self, dte):
         self.lista_dte.append(dte)
 
-    def buscarReferencia(self, referencia):
+    def buscarReferencia(self, referencia, fecha):
         if self.lista_dte:
             for dte in self.lista_dte:
-                if dte.referencia == referencia:
+                if dte.referencia == referencia and dte.fecha == fecha:
                     return True
         return False
 
@@ -166,6 +178,66 @@ class ListaErrores:
 
 
 # ##################################################### CLASES #########################################################
+class ListaDatosGenerales:
+    def __init__(self):
+        self.lista_datosGen = []
+
+    def add(self, error):
+        self.lista_datosGen.append(error)
+
+    def devolverTamanio(self):
+        return len(self.lista_datosGen)
+
+    def actualizarCantFacturasRecibidas(self, fecha):
+        encontrado = 0
+        if self.lista_datosGen:
+            for e in self.lista_datosGen:
+                if e.fecha == fecha:
+                    e.cantFacturasRecibidas += 1
+                    encontrado = 1
+        if encontrado == 0:
+            self.add(DatosGenerales(fecha, 1, 0, 0, 0))
+
+    def actualizarCantFacturasCorrectas(self, fecha):
+        encontrado = 0
+        if self.lista_datosGen:
+            for e in self.lista_datosGen:
+                if e.fecha == fecha:
+                    e.cantFacturasCorrectas += 1
+                    encontrado = 1
+        if encontrado == 0:
+            self.add(DatosGenerales(fecha, 0, 1, 0, 0))
+
+    def actualizarCantEmisores(self, fecha):
+        encontrado = 0
+        if self.lista_datosGen:
+            for e in self.lista_datosGen:
+                if e.fecha == fecha:
+                    e.cantEmisores += 1
+                    encontrado = 1
+        if encontrado == 0:
+            self.add(DatosGenerales(fecha, 0, 0, 1, 0))
+
+    def actualizarCantReceptores(self, fecha):
+        encontrado = 0
+        if self.lista_datosGen:
+            for e in self.lista_datosGen:
+                if e.fecha == fecha:
+                    e.cantReceptores += 1
+                    encontrado = 1
+        if encontrado == 0:
+            self.add(DatosGenerales(fecha, 0, 0, 0, 1))
+
+    def obtenerFacturasCorrectas(self, fecha):
+        cantidad = 0
+        if self.lista_datosGen:
+            for e in self.lista_datosGen:
+                if e.fecha == fecha:
+                    cantidad = e.cantFacturasCorrectas
+        return cantidad
+
+
+# ##################################################### CLASES #########################################################
 class ListaAprobacion:
     def __init__(self):
         self.lista_aprobacion = []
@@ -181,9 +253,13 @@ class ListaAprobacion:
 listaDTE = ListaDTE()
 listaErrores = ListaErrores()
 listaAprobaciones = ListaAprobacion()
-cantFac_Correctas = 0
-canEmisores = 0
-canReceptores = 0
+listaDatosGenerales = ListaDatosGenerales()
+
+
+# cantFac_Total = 0
+# cantFac_Correctas = 0
+# canEmisores = 0
+# canReceptores = 0
 
 
 # ##################################################### OBJETOS ########################################################
@@ -198,17 +274,17 @@ def quitarCaracteresEspeciales(cadenaEvaluar):
     return cadenaRetornar
 
 
-def CrearAprobacion(referencia, nitEmisor, dia, mes, anio):
-    global cantFac_Correctas, listaAprobaciones, listaDTE, listaErrores
-    tex = str(cantFac_Correctas)
+def CrearAprobacion(fecha, referencia, nitEmisor, dia, mes, anio):
+    global listaAprobaciones, listaDTE, listaErrores, listaDatosGenerales
+    tex = str(listaDatosGenerales.obtenerFacturasCorrectas(fecha))
     cerosRestantes = 8 - len(tex)
     cadena = ""
     while cerosRestantes > 0:
         cadena += "0"
         cerosRestantes -= 1
-    parte2 = cadena + str(cantFac_Correctas)
+    parte2 = cadena + tex
     codigoAprobacion = anio + mes + dia + parte2
-    aprobacion = Aprobacion(referencia, nitEmisor, codigoAprobacion)
+    aprobacion = Aprobacion(fecha, referencia, nitEmisor, codigoAprobacion)
     listaAprobaciones.add(aprobacion)
     # print("dte:", listaDTE.devolverTamanio, "error:", listaErrores.devolverTamanio, "apro:",
     #       listaAprobaciones.devolverTamanio)
@@ -223,7 +299,7 @@ def index():
 @app.route('/process_xml', methods=['POST'])
 def post_xml():
     # xml_cadena = request.data.decode("utf-8")
-    global listaDTE, listaErrores, cantFac_Correctas, canEmisores, canReceptores
+    global listaDTE, listaErrores, listaDatosGenerales
     xml_cadena = request.data.decode("ISO-8859-1")
     print(xml_cadena)
     errorArchivo = 0
@@ -243,9 +319,10 @@ def post_xml():
             # print(tiempo)
         # print(tiempo)
         # ######################## FIN EXPRESION REGULAR ###############################################################
+        listaDatosGenerales.actualizarCantFacturasRecibidas(tiempo)
         r0 = dte.getElementsByTagName("REFERENCIA")[0]
         referencia = quitarCaracteresEspeciales(str(r0.firstChild.data))
-        if listaDTE.buscarReferencia(referencia):
+        if listaDTE.buscarReferencia(referencia, tiempo):
             listaErrores.actualizarReferencia(tiempo)
             print("Referencia repetida:", referencia, '-', tiempo)
             errorArchivo = 1
@@ -256,7 +333,7 @@ def post_xml():
             print("Error Nit Emisor:", nitEmisor, '-', tiempo)
             errorArchivo = 1
         if listaDTE.NoEncontrarNitEmisor(nitEmisor):
-            canEmisores += 1
+            listaDatosGenerales.actualizarCantEmisores(tiempo)
         nR0 = dte.getElementsByTagName("NIT_RECEPTOR")[0]
         nitReceptor = quitarCaracteresEspeciales(str(nR0.firstChild.data))
         if listaDTE.validarNit(nitReceptor):
@@ -264,7 +341,7 @@ def post_xml():
             print("Error Nit Receptor:", nitReceptor, '-', tiempo)
             errorArchivo = 1
         if listaDTE.NoEncontrarNitReceptor(nitReceptor):
-            canReceptores += 1
+            listaDatosGenerales.actualizarCantReceptores(tiempo)
         v0 = dte.getElementsByTagName("VALOR")[0]
         valor = quitarCaracteresEspeciales(str(v0.firstChild.data))
         objV = re.search('[\d]{1,15}.[\d]{2}', valor)
@@ -275,7 +352,7 @@ def post_xml():
             valor = float(objV.group(0))
         i0 = dte.getElementsByTagName("IVA")[0]
         iva = float(quitarCaracteresEspeciales(str(i0.firstChild.data)))
-        i = valor * 0.12
+        i = float(valor) * 0.12
         ivaResultado = float("{0:.2f}".format(i))
         if iva != ivaResultado:
             listaErrores.actualizarIVA(tiempo)
@@ -283,7 +360,7 @@ def post_xml():
             errorArchivo = 1
         tt0 = dte.getElementsByTagName("TOTAL")[0]
         total = float(quitarCaracteresEspeciales(str(tt0.firstChild.data)))
-        totalResultado = valor + iva
+        totalResultado = float(valor) + float(iva)
         if total != totalResultado:
             listaErrores.actualizarTotal(tiempo)
             print("Total mal calculado:", total, '-', tiempo)
@@ -291,8 +368,9 @@ def post_xml():
         # #SI NO CUENTA CON ERRORES SE ALMACENA#
         if errorArchivo == 0:
             listaDTE.add(DTE(tiempo, referencia, nitEmisor, nitReceptor, valor, iva, total))
-            cantFac_Correctas += 1
-            CrearAprobacion(referencia, nitEmisor, str(obj[0][0]), str(obj[0][1]), str(obj[0][2]))
+            listaDatosGenerales.actualizarCantFacturasCorrectas(tiempo)
+            CrearAprobacion(tiempo, referencia, nitEmisor, str(obj[0][0]), str(obj[0][1]), str(obj[0][2]))
+        errorArchivo = 0
     print("**************DONE--Flask-POST-********************************************")
     return ''
 
@@ -301,15 +379,111 @@ def post_xml():
 def reset():
     texto = request.data.decode("ISO-8859-1")
     if str(texto) == 'reset':
-        global listaDTE, listaErrores, cantFac_Correctas, canEmisores, canReceptores, listaAprobaciones
+        global listaDTE, listaErrores, listaAprobaciones, listaDatosGenerales
         listaDTE = None
         listaErrores = None
         listaAprobaciones = None
-        cantFac_Correctas = 0
-        canEmisores = 0
-        canReceptores = 0
         print("**************DONE--Flask-POST-RESET-********************************************")
     return ''
+
+
+@app.route('/process_xml', methods=['GET'])
+def get_xml():
+    global listaDTE, listaDatosGenerales, listaAprobaciones, listaErrores
+    document = minidom.Document()
+    root = document.createElement('LISTA_AUTORIZACIONES')
+    for dte in listaDTE.lista_dte:
+        fechaDTE = dte.fecha
+        autorizacion = document.createElement('AUTORIZACION')
+        root.appendChild(autorizacion)
+
+        fechaDoc = document.createElement('FECHA')
+        fechaDoc.appendChild(document.createTextNode(fechaDTE))
+        autorizacion.appendChild(fechaDoc)
+
+        for dg in listaDatosGenerales.lista_datosGen:
+            if dg.fecha == fechaDTE:
+                facturasTotales = document.createElement('FACTURAS_RECIBIDAS')
+                facturasTotales.appendChild(document.createTextNode(str(dg.cantFacturasRecibidas)))
+                autorizacion.appendChild(facturasTotales)
+        errores = document.createElement('ERRORES')
+        autorizacion.appendChild(errores)
+        er = 0
+        for e in listaErrores.lista_errores:
+            if e.fecha == fechaDTE:
+                er = 1
+                nitEmisor = document.createElement('NIT_EMISOR')
+                nitEmisor.appendChild(document.createTextNode(str(e.cantNitEmisor)))
+                errores.appendChild(nitEmisor)
+                nitReceptor = document.createElement('NIT_RECEPTOR')
+                nitReceptor.appendChild(document.createTextNode(str(e.cantNitReceptor)))
+                errores.appendChild(nitReceptor)
+                iva = document.createElement('IVA')
+                iva.appendChild(document.createTextNode(str(e.cantIva)))
+                errores.appendChild(iva)
+                total = document.createElement('TOTAL')
+                total.appendChild(document.createTextNode(str(e.cantTotal)))
+                errores.appendChild(total)
+                referencia = document.createElement('REFERENCIA_DUPLICADA')
+                referencia.appendChild(document.createTextNode(str(e.CantReferencia)))
+                errores.appendChild(referencia)
+        if er == 0:
+            nitEmisor = document.createElement('NIT_EMISOR')
+            nitEmisor.appendChild(document.createTextNode(str(0)))
+            errores.appendChild(nitEmisor)
+            nitReceptor = document.createElement('NIT_RECEPTOR')
+            nitReceptor.appendChild(document.createTextNode(str(0)))
+            errores.appendChild(nitReceptor)
+            iva = document.createElement('IVA')
+            iva.appendChild(document.createTextNode(str(0)))
+            errores.appendChild(iva)
+            total = document.createElement('TOTAL')
+            total.appendChild(document.createTextNode(str(0)))
+            errores.appendChild(total)
+            referencia = document.createElement('REFERENCIA_DUPLICADA')
+            referencia.appendChild(document.createTextNode(str(0)))
+            errores.appendChild(referencia)
+
+        for dg in listaDatosGenerales.lista_datosGen:
+            if dg.fecha == fechaDTE:
+                facturasCorrec = document.createElement('FACTURAS_CORRECTAS')
+                facturasCorrec.appendChild(document.createTextNode(str(dg.cantFacturasCorrectas)))
+                autorizacion.appendChild(facturasCorrec)
+                canEmisores = document.createElement('CANTIDAD_EMISORES')
+                canEmisores.appendChild(document.createTextNode(str(dg.cantEmisores)))
+                autorizacion.appendChild(canEmisores)
+                canRecepto = document.createElement('CANTIDAD_RECEPTORES')
+                canRecepto.appendChild(document.createTextNode(str(dg.cantReceptores)))
+                autorizacion.appendChild(canRecepto)
+
+        listadoAutori = document.createElement('LISTADO_AUTORIZACIONES')
+        autorizacion.appendChild(listadoAutori)
+        cont = 0
+        for a in listaAprobaciones.lista_aprobacion:
+            if a.fecha == fechaDTE:
+                cont = +1
+                aprobacion = document.createElement('APROBACION')
+                listadoAutori.appendChild(aprobacion)
+
+                nitEmi = document.createElement('NIT_EMISOR')
+                nitEmi.setAttribute("ref", a.referencia)
+                nitEmi.appendChild(document.createTextNode(str(a.nitEmisor)))
+                aprobacion.appendChild(nitEmi)
+
+                codigo = document.createElement('CODIGO_APROBACION')
+                codigo.appendChild(document.createTextNode(a.codigoAprobacion))
+                aprobacion.appendChild(codigo)
+        totalApro = document.createElement('TOTAL_APROBACIONES')
+        totalApro.appendChild(document.createTextNode(str(cont)))
+        listadoAutori.appendChild(totalApro)
+
+    xml_text = root.toprettyxml(indent='\t', encoding='utf-8')
+    xml_doc = xml_text.decode('utf-8')
+    archivoXML = open("XML_Salida" + '.xml', 'wb')
+    archivoXML.write(xml_text)
+    archivoXML.close()
+    print("**************DONE--Flask-GET-XML-********************************************")
+    return xml_doc
 
 
 if __name__ == '__main__':

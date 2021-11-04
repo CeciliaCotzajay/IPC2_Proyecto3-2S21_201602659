@@ -29,4 +29,5 @@ urlpatterns = [
     path('recibirXML', views.recibirXML, name='recibirXML'),
     path('resetear', views.resetear, name='resetear'),
     path('enviarXML', views.enviarXML, name='enviarXML'),
+    path('traerXML', views.traerXML, name='traerXML'),
 ]
